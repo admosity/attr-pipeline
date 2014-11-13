@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/admosity/pipe-validator/issues"
   },
-  "homepage": "https://github.com/admosity/pipe-validator"
+  "homepage": "https://github.com/admosity/pipe-validator",
+  "dependencies": {
+    "coffee-script": "^1.8.0"
+  }
 }
