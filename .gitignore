@@ -36,6 +36,9 @@
 ehthumbs.db
 Thumbs.db
 
+# Ignore sublime text specific
+*.sublime-workspace
+
 pids
 logs
 results
