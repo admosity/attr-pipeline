@@ -1,0 +1,22 @@
+{
+  "name": "pipe-validator",
+  "version": "1.0.0",
+  "description": "Simple object validation.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/admosity/pipe-validator.git"
+  },
+  "keywords": [
+    "validation"
+  ],
+  "author": "Adam Lee",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/admosity/pipe-validator/issues"
+  },
+  "homepage": "https://github.com/admosity/pipe-validator"
+}
