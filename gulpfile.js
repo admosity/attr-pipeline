@@ -8,7 +8,10 @@ var paths = {
 };
 
 var handleError = function(err) {
-  console.log(err);
+  if(err.stack) {
+    console.log("GULP: ")
+    console.log(err.stack);
+  }
   return this.emit('end');
 };
 

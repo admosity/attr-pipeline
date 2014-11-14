@@ -1,5 +1,5 @@
 {
-  "name": "pipe-validator",
+  "name": "attr-pipeline",
   "version": "0.0.0",
   "description": "Simple object validation.",
   "main": "index.js",
@@ -21,7 +21,8 @@
   "homepage": "https://github.com/admosity/pipe-validator",
   "dependencies": {
     "async": "^0.9.0",
-    "coffee-script": "^1.8.0"
+    "coffee-script": "^1.8.0",
+    "q": "^1.1.1"
   },
   "devDependencies": {
     "chai": "^1.10.0",

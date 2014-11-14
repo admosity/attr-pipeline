@@ -1,4 +1,7 @@
 async = require 'async'
+Q = require 'q'
+
+Q.longStackSupport = true
 
 ###
 # Helpers
@@ -9,19 +12,20 @@ typeIsArray = Array.isArray || ( value ) -> return {}.toString.call( value ) is 
 injectAttr = (value, callback)->
   callback(null, value)
 
-pipeCleaner = (attr, pipeline, obj, callback)->
-  pipeline.unshift((cb)->cb(null, obj[attr]))
-  async.waterfall(pipeline, (err, result)->
-    if err
-      callback(err)
-    else
-      if result is not null
-        obj[attr] = result
-        callback(err, result)
-  )
+pipeCleaner = (attr, pipeline, obj)->
 
-
-
+  if pipeline.required or obj[attr]?
+    pipeline.reduce(Q.when, Q(obj[attr]))
+    .then (result)->
+      obj[attr] = result
+      return obj
+    .catch (err)->
+      if err.message isnt "`#{attr}` is required."
+        throw new Error("Path `#{attr}` not valid with value: `#{obj[attr]}`")
+      else throw err
+  else
+    obj
+    
 ###
 Validator class
 ###
@@ -39,7 +43,6 @@ class Validator
     @pipeFunctions = []
     for attr, schemaDef of arguments[0]
       do (attr, schemaDef)=>
-        # console.log schemaDef.pipe
         if not schemaDef.pipe and not schemaDef.required? 
 
           throw new Error("pipe or required needs to be defined for `#{attr}`")
@@ -54,41 +57,73 @@ class Validator
 
         preppedPipe ?= []
 
+
+
         if schemaDef.required
           preppedPipe.unshift (value, callback)->
             if !value?
               callback(new Error("`#{attr}` is required."))
             else
               callback(null, value)
+
+        preppedPipe = preppedPipe.map (fun)->Q.denodeify(fun)
+
+
+        preppedPipe.attr = attr
+        preppedPipe.required = schemaDef.required ? false
           
-        # async.waterfall.bind(null, [injectAttrasync.waterfall.bind])
         pipeFunc = pipeCleaner.bind(null, attr, preppedPipe)
         pipeFunc.attr = attr
+        pipeFunc.required = schemaDef.required ? false
+        pipeFunc.hasPipe = (preppedPipe.length > 0 and !schemaDef.required) or (schemaDef.required and preppedPipe.length > 1)
         @pipeFunctions.push pipeFunc
 
+    @pipeFunctions.sort((a, b)->
+      if not a.required and not a.hasPipe
+        return 1
+      else if not a.required and a.hasPipe
+        if not b.required and b.hasPipe
+          return 0
+        else if b.required and not b.hasPipe
+          return 1
+        else if b.required and b.hasPipe
+          return 1
+      else if a.required and not a.hasPipe
+        if not b.required and b.hasPipe
+          return -1
+        else if b.required and not b.hasPipe
+          return 0
+        else if b.required and b.hasPipe
+          return -1
+      else if a.required and a.hasPipe
+        if not b.required and b.hasPipe
+          return -1
+        else if b.required and not b.hasPipe
+          return 1
+        else if b.required and b.hasPipe
+          return 0
+
+      return 0
+    )
 
     opts = {}
     if arguments.length >= 2
       opts = arguments[1]
 
-  _validateHelper: (index, length, obj, callback)->
-    if index is length
-      return callback()
-
-    @pipeFunctions[index](obj, (err)->
-      if err
-        callback(err)
-      else
-        @_validateHelper(index+1, length, obj, callback)
-    )
 
   validate: (obj, callback)->
-    curr = 0
-    len = @pipeFunctions.length
-    @_validateHelper(curr, len, obj, callback)
+    rtn = @pipeFunctions.reduce(Q.when, Q(obj))
 
-        
-
+    if !callback? then rtn else 
+      theErr = null
+      theObj = null
+      rtn.then (obj)->
+        theObj = obj
+      .catch (err)->
+        theErr = err
+      .fin ()->
+        callback(theErr, theObj)
+      
 exports.Validator = Validator
     
 
