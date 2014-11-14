@@ -1,6 +1,7 @@
 require('coffee-script/register');
 var gulp = require('gulp')
-  , mocha = require('gulp-mocha');
+  , mocha = require('gulp-mocha')
+  , bump = require('gulp-bump');
 
 
 var paths = {
@@ -30,5 +31,21 @@ gulp.task("test", function() {
 });
 
 
+gulp.task('bump-major', function(){
+  gulp.src(['./package.json'])
+  .pipe(bump({type:'major'}))
+  .pipe(gulp.dest('./'));
+});
 
+gulp.task('bump-minor', function(){
+  gulp.src(['./package.json'])
+  .pipe(bump({type:'minor'}))
+  .pipe(gulp.dest('./'));
+});
+
+gulp.task('bump-patch', function(){
+  gulp.src(['./package.json'])
+  .pipe(bump({type:'patch'}))
+  .pipe(gulp.dest('./'));
+});
 
