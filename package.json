@@ -4,11 +4,11 @@
   "description": "Simple object validation.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/admosity/pipe-validator.git"
+    "url": "https://github.com/admosity/attr-pipeline.git"
   },
   "keywords": [
     "validation"
@@ -16,9 +16,9 @@
   "author": "Adam Lee",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/admosity/pipe-validator/issues"
+    "url": "https://github.com/admosity/attr-pipeline/issues"
   },
-  "homepage": "https://github.com/admosity/pipe-validator",
+  "homepage": "https://github.com/admosity/attr-pipeline",
   "dependencies": {
     "async": "^0.9.0",
     "coffee-script": "^1.8.0",

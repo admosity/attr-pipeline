@@ -1,7 +1,6 @@
-async = require 'async'
 Q = require 'q'
 
-Q.longStackSupport = true
+# Q.longStackSupport = true
 
 ###
 # Helpers
