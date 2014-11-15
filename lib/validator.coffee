@@ -31,15 +31,13 @@ Validator class
 class Validator
 
   constructor: () ->
-    # ...
     if arguments.length < 1
       throw new Error("Must have at least one argument.")
 
     if typeof arguments[0] isnt 'object'
       throw new Error("First argument must be an object.")
 
-    @schemaRules = {}
-    @pipeFunctions = []
+    @_pipeFunctions = []
     for attr, schemaDef of arguments[0]
       do (attr, schemaDef)=>
         if not schemaDef.pipe and not schemaDef.required? 
@@ -67,7 +65,6 @@ class Validator
 
         preppedPipe = preppedPipe.map (fun)->Q.denodeify(fun)
 
-
         preppedPipe.attr = attr
         preppedPipe.required = schemaDef.required ? false
           
@@ -75,9 +72,9 @@ class Validator
         pipeFunc.attr = attr
         pipeFunc.required = schemaDef.required ? false
         pipeFunc.hasPipe = (preppedPipe.length > 0 and !schemaDef.required) or (schemaDef.required and preppedPipe.length > 1)
-        @pipeFunctions.push pipeFunc
+        @_pipeFunctions.push pipeFunc
 
-    @pipeFunctions.sort((a, b)->
+    @_pipeFunctions.sort((a, b)->
       if not a.required and not a.hasPipe
         return 1
       else if not a.required and a.hasPipe
@@ -111,7 +108,7 @@ class Validator
 
 
   validate: (obj, callback)->
-    rtn = @pipeFunctions.reduce(Q.when, Q(obj))
+    rtn = @_pipeFunctions.reduce(Q.when, Q(obj))
 
     if !callback? then rtn else 
       theErr = null
