@@ -54,7 +54,7 @@ class Validator
         if not schemaDef.pipe and not schemaDef.required? 
 
           throw new Error("pipe or required needs to be defined for `#{attr}`")
-        if not typeIsArray(schemaDef.pipe) and not schemaDef.required
+        if schemaDef.pipe? and not typeIsArray(schemaDef.pipe)
           throw new Error("pipe must be an array")
           
         preppedPipe = schemaDef.pipe?.slice(0).map (fun)->
