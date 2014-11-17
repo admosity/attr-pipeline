@@ -19,9 +19,20 @@ pipeCleaner = (attr, pipeline, obj)->
       obj[attr] = result
       return obj
     .catch (err)->
+      originalError = err
+      newErr = new Error(err.message or "")
+
+      newErr.ap = {}
+      newErr.ap.path = attr
+      newErr.ap.value = obj[attr]
+
+      newErr.ap.originalError = err
       if err.message isnt "`#{attr}` is required."
-        throw new Error("Path `#{attr}` not valid with value: `#{obj[attr]}`")
-      else throw err
+
+        newErr.message = "Path `#{attr}` not valid with value: `#{obj[attr]}`"
+        throw newErr
+      else 
+        throw newErr
   else
     obj
     

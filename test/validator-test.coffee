@@ -228,6 +228,17 @@ describe "Pipeline tests", ()->
         catch e
           done(e)
         
+    it "should fail and be able to retrieve meta data", (done)->
+      testValidator.validate {attr1: "hello1", attr2: "anything"}, (err, obj)->
+        try
+          expect(err.ap.path).to.equal('attr1')
+          expect(err.message).to.equal("Path `attr1` not valid with value: `hello1`")
+          expect(err.ap.value).to.equal("hello1")
+          # single argument functions return true
+          expect(err.ap.originalError).to.be.true()
+          done()
+        catch e
+          done(e)
 
 
 
