@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/admosity/attr-pipeline.svg?branch=master)](https://travis-ci.org/admosity/attr-pipeline)
+
 # Attribute Pipeline
 
 Easy to use no frills object validation/object transformations.
